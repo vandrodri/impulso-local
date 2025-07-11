@@ -414,3 +414,17 @@ footer {
     font-weight: 600;
     min-height: 20px;
 }
+/* Estilo para o botão Salvar Post */
+#save-post-button {
+    background-color: #ffc107; /* Um amarelo-ouro para destaque */
+    color: #333;
+    font-weight: 700;
+    box-shadow: 
+        -5px -5px 10px var(--shadow-light),
+        5px 5px 10px var(--shadow-dark);
+}
+
+#save-post-button:active {
+    box-shadow: inset -5px -5px 10px var(--shadow-light),
+                inset 5px 5px 10px var(--shadow-dark);
+}

@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageResults = document.getElementById('image-results');
     const loadingMessage = document.getElementById('loading-message');
     const checklistItems = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+const checklistItems = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+const savePostButton = document.getElementById('save-post-button'); // ADICIONE ESTA LINHA
 
     // Autenticação
     const authModal = document.getElementById('auth-modal');
@@ -129,14 +131,20 @@ document.addEventListener('DOMContentLoaded', () => {
         auth.signOut();
     }
 
-    auth.onAuthStateChanged(user => {
-        if (user) {
-            userArea.innerHTML = `<button id="logout-button">Sair (${user.email.split('@')[0]})</button>`;
-        } else {
-            userArea.innerHTML = `<button id="open-login-modal-button">Login</button>`;
-        }
-        setupAuthListeners();
-    });
+    // SUBSTITUA a função onAuthStateChanged INTEIRA por esta versão melhorada:
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // Usuário está logado
+        userArea.innerHTML = `<button id="logout-button">Sair (${user.email.split('@')[0]})</button>`;
+        savePostButton.style.display = 'inline-block'; // MOSTRA o botão Salvar
+        carregarProgressoChecklist(user.uid); // Carrega checklist do usuário
+    } else {
+        // Usuário está deslogado
+        userArea.innerHTML = `<button id="open-login-modal-button">Login</button>`;
+        savePostButton.style.display = 'none'; // ESCONDE o botão Salvar
+    }
+    setupAuthListeners();
+});
 
     function traduzirErroFirebase(code) {
         switch (code) {
@@ -175,7 +183,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function salvarProgressoChecklist() { if(!auth.currentUser) return; const progresso = {}; checklistItems.forEach(item => { progresso[item.id] = item.checked; }); localStorage.setItem(`progresso_${auth.currentUser.uid}`, JSON.stringify(progresso)); }
     function carregarProgressoChecklist() { if(!auth.currentUser) return; const progresso = JSON.parse(localStorage.getItem(`progresso_${auth.currentUser.uid}`)); if (progresso) { checklistItems.forEach(item => { item.checked = progresso[item.id] || false; }); } }
-    
+    // ADICIONE ESTA NOVA FUNÇÃO
+function salvarPost() {
+    const postContent = postTemplateTextarea.value;
+    if (!postContent.trim()) {
+        alert("Não há nada para salvar!");
+        return;
+    }
+
+    const user = auth.currentUser;
+    if (user) {
+        db.collection('users').doc(user.uid).collection('savedPosts').add({
+            content: postContent,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then(() => {
+            savePostButton.textContent = 'Salvo!';
+            setTimeout(() => {
+                savePostButton.textContent = 'Salvar Post';
+            }, 2000);
+        })
+        .catch(error => {
+            console.error("Erro ao salvar post: ", error);
+            alert("Ocorreu um erro ao salvar seu post. Tente novamente.");
+        });
+    }
+}
     // --- Event Listeners do App ---
     if(postTypeSelect) postTypeSelect.addEventListener('change', updateTemplate);
     if(copyButton) copyButton.addEventListener('click', copyToClipboard);
@@ -183,6 +216,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if(searchButton) searchButton.addEventListener('click', buscarImagens);
     if(searchInput) searchInput.addEventListener('keypress', e => e.key === 'Enter' && buscarImagens());
     if(checklistItems) checklistItems.forEach(item => item.addEventListener('change', salvarProgressoChecklist));
+if(searchInput) searchInput.addEventListener('keypress', e => e.key === 'Enter' && buscarImagens());
+if(savePostButton) savePostButton.addEventListener('click', salvarPost); // ADICIONE ESTA LINHA
+if(checklistItems) checklistItems.forEach(item => item.addEventListener('change', salvarProgressoChecklist));
 
     // --- Ações Iniciais do App ---
     updateTemplate();
