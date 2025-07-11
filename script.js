@@ -45,7 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageResults = document.getElementById('image-results');
     const loadingMessage = document.getElementById('loading-message');
     const checklistItems = document.querySelectorAll('.checklist-item input[type="checkbox"]');
-
+const checklistItems = document.querySelectorAll('.checklist-item input[type="checkbox"]');
+const savePostButton = document.getElementById('save-post-button'); // ADICIONE ESTA LINHA
     // Autenticação
     const authModal = document.getElementById('auth-modal');
     const closeModalButton = document.getElementById('close-modal-button');
@@ -131,13 +132,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     auth.onAuthStateChanged(user => {
-        if (user) {
-            userArea.innerHTML = `<button id="logout-button">Sair (${user.email.split('@')[0]})</button>`;
-        } else {
-            userArea.innerHTML = `<button id="open-login-modal-button">Login</button>`;
-        }
-        setupAuthListeners();
-    });
+        // SUBSTITUA a função onAuthStateChanged INTEIRA por esta versão melhorada:
+auth.onAuthStateChanged(user => {
+    if (user) {
+        // Usuário está logado
+        userArea.innerHTML = `<button id="logout-button">Sair (${user.email.split('@')[0]})</button>`;
+        savePostButton.style.display = 'inline-block'; // MOSTRA o botão Salvar
+        carregarProgressoChecklist(user.uid); // Carrega checklist do usuário
+    } else {
+        // Usuário está deslogado
+        userArea.innerHTML = `<button id="open-login-modal-button">Login</button>`;
+        savePostButton.style.display = 'none'; // ESCONDE o botão Salvar
+    }
+    setupAuthListeners();
+});
 
     function traduzirErroFirebase(code) {
         switch (code) {
@@ -159,6 +167,32 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const ideias = ["Apresente um funcionário e conte uma curiosidade sobre ele.", "Mostre os bastidores da sua loja ou escritório.", "Qual foi o pedido mais inusitado que já recebeu?", "Crie um post de 'Verdade ou Mentira' sobre seu produto/serviço.", "Compartilhe um depoimento de um cliente satisfeito.", "Faça uma enquete: 'Qual desses dois produtos vocês preferem?'.", "Dê uma dica rápida que não seja sobre vender, mas que ajude seu cliente.", "Poste uma foto de um detalhe interessante do seu espaço de trabalho.", "Conte a história de como o seu negócio começou.", "Pergunte aos seus seguidores o que eles gostariam de ver em oferta."];
     function updateTemplate() { if(postTemplateTextarea) postTemplateTextarea.value = templates[postTypeSelect.value]; }
+// ADICIONE ESTA NOVA FUNÇÃO
+function salvarPost() {
+    const postContent = postTemplateTextarea.value;
+    if (!postContent.trim()) {
+        alert("Não há nada para salvar!");
+        return;
+    }
+
+    const user = auth.currentUser;
+    if (user) {
+        db.collection('users').doc(user.uid).collection('savedPosts').add({
+            content: postContent,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        })
+        .then(() => {
+            savePostButton.textContent = 'Salvo!';
+            setTimeout(() => {
+                savePostButton.textContent = 'Salvar Post';
+            }, 2000);
+        })
+        .catch(error => {
+            console.error("Erro ao salvar post: ", error);
+            alert("Ocorreu um erro ao salvar seu post. Tente novamente.");
+        });
+    }
+}
     function copyToClipboard() { postTemplateTextarea.select(); document.execCommand('copy'); copyButton.textContent = 'Copiado!'; setTimeout(() => { copyButton.textContent = 'Copiar Texto do Post'; }, 2000); }
     function gerarNovaIdeia() { if(ideiaTexto) ideiaTexto.textContent = ideias[Math.floor(Math.random() * ideias.length)]; }
     async function buscarImagens() {
