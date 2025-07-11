@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impulso Local - Crie Posts para seu Negócio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="logo.png" alt="Logo Impulso Local" class="logo">
+            <h1>Impulso Local</h1>
+            <p>Crie posts de alta qualidade para o seu negócio em 2 minutos.</p>
+        </header>
+
+        <main>
+            <section class="card" id="gerador-posts">
+                <h2>Gerador de Posts Inteligente</h2>
+                <p>Escolha um tipo de post e preencha as informações.</p>
+
+                <div class="input-group">
+                    <label for="post-type">1. Tipo de Post:</label>
+                    <select id="post-type">
+                        <option value="novidade">📢 Novidade</option>
+                        <option value="oferta">💰 Oferta Especial</option>
+                        <option value="evento">📅 Evento</option>
+                        <option value="dica">💡 Dica da Semana</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="post-template">2. Template de Texto:</label>
+                    <textarea id="post-template" rows="8" placeholder="O texto do seu post aparecerá aqui..."></textarea>
+                </div>
+
+                <div class="actions">
+                    <button id="copy-button">Copiar Texto do Post</button>
+                    <a href="https://business.google.com/locations" target="_blank" class="button-external">
+                        Abrir meu GMB ↗
+                    </a>
+                </div>
+            </section>
+
+            <section class="card-placeholder" id="biblioteca-midia">
+                <h2>Biblioteca de Mídia Gratuita</h2>
+                <p>Busque imagens profissionais para seu post. (Em breve)</p>
+            </section>
+
+            <section class="card-placeholder" id="checklist-gmb">
+                <h2>Checklist de Otimização GMB</h2>
+                <p>Tarefas rápidas para otimizar seu perfil. (Em breve)</p>
+            </section>
+        </main>
+
+        <footer>
+            <p>Projeto Impulso Local. Idealizado por Vanderlei, construído por Gemini.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
