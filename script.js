@@ -13,7 +13,6 @@ const firebaseConfig = {
   measurementId: "G-XWFZ18HB97"
 };
 
-
 // Inicializa o Firebase e cria referências para os serviços
 try {
     const app = firebase.initializeApp(firebaseConfig);
