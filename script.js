@@ -26,8 +26,7 @@ console.log("Firebase conectado com sucesso!");
 
 document.addEventListener('DOMContentLoaded', () => {
     // COLE SUA CHAVE DO UNSPLASH AQUI
-    const unsplashAccessKey = "e0Bb2UHLInYKGGOXmbp8vt_nIXoom5sXhu5341TwwwA
-";
+    const unsplashAccessKey = "e0Bb2UHLInYKGGOXmbp8vt_nIXoom5sXhu5341TwwwA";
 
     // --- Seletores de Elementos (DOM) ---
     // App principal
