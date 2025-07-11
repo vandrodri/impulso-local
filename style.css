@@ -156,4 +156,30 @@ footer {
     margin-top: 40px;
     font-size: 0.9em;
     opacity: 0.7;
+}/* Estilos para o Banco de Ideias */
+#banco-ideias {
+    text-align: center;
+}
+
+#banco-ideias p {
+    font-size: 1.1em;
+    min-height: 50px; /* Garante que o card não mude de tamanho */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#nova-ideia-button {
+    width: 100%;
+    background-color: var(--bg-color);
+    color: var(--primary-color);
+     box-shadow: 
+        -5px -5px 10px var(--shadow-light),
+        5px 5px 10px var(--shadow-dark);
+}
+
+#nova-ideia-button:active {
+    box-shadow: inset -5px -5px 10px var(--shadow-light),
+                inset 5px 5px 10px var(--shadow-dark);
 }
