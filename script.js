@@ -1,9 +1,9 @@
 // =================================================================
-// PARTE 1: CONFIGURAÇÃO E CONEXÃO COM O FIREBASE
+// PARTE 1: CONFIGURAÇÃO DO FIREBASE
 // =================================================================
 
-// COLE SEU OBJETO firebaseConfig COMPLETO AQUI DENTRO.
-const firebaseConfig = {// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+/*--- COLE AQUI DENTRO O SEU OBJETO firebaseConfig COMPLETO ---*/
+const firebaseConfig = {
   apiKey: "AIzaSyBi0MLw52Dk5mTDWDp_Zh_3M9LNVxCkUfA",
   authDomain: "impulso-local-app.firebaseapp.com",
   projectId: "impulso-local-app",
@@ -11,14 +11,17 @@ const firebaseConfig = {// For Firebase JS SDK v7.20.0 and later, measurementId 
   messagingSenderId: "29137714970",
   appId: "1:29137714970:web:68b1f15b779b1e87b5f6a3",
   measurementId: "G-XWFZ18HB97"
+
 };
+
+
 // =================================================================
 // PARTE 2: CHAVE DA API DO UNSPLASH
 // =================================================================
 
-// COLE SUA CHAVE DO UNSPLASH AQUI DENTRO DAS ASPAS.
-const unsplashAccessKey = "e0Bb2UHLInYKGGOXmbp8vt_nIXoom5sXhu5341TwwwA
-";
+/*--- COLE AQUI DENTRO, ENTRE AS ASPAS, A SUA CHAVE DO UNSPLASH ---*/
+const unsplashAccessKey = "e0Bb2UHLInYKGGOXmbp8vt_nIXoom5sXhu5341TwwwA";
+
 
 // =================================================================
 // CÓDIGO DO APP (NÃO MEXER DAQUI PARA BAIXO)
@@ -35,7 +38,6 @@ try {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Seletores de Elementos (DOM) ---
     const postTypeSelect = document.getElementById('post-type');
     const postTemplateTextarea = document.getElementById('post-template');
     const copyButton = document.getElementById('copy-button');
@@ -62,8 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const authError = document.getElementById('auth-error');
     const userArea = document.getElementById('user-area');
 
-
-    // --- LÓGICA DE AUTENTICAÇÃO ---
     function setupAuthListeners() {
         const openLoginBtn = document.getElementById('open-login-modal-button');
         if (openLoginBtn) openLoginBtn.addEventListener('click', () => authModal.style.display = 'flex');
@@ -93,11 +93,11 @@ document.addEventListener('DOMContentLoaded', () => {
     auth.onAuthStateChanged(user => {
         if (user) {
             userArea.innerHTML = `<button id="logout-button">Sair (${user.email.split('@')[0]})</button>`;
-            savePostButton.style.display = 'inline-block';
+            if(savePostButton) savePostButton.style.display = 'inline-block';
             carregarProgressoChecklist(user.uid);
         } else {
             userArea.innerHTML = `<button id="open-login-modal-button">Login</button>`;
-            savePostButton.style.display = 'none';
+            if(savePostButton) savePostButton.style.display = 'none';
         }
         setupAuthListeners();
     });
@@ -112,7 +112,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LÓGICA PRINCIPAL DO APP ---
     const templates = {novidade: `📢 NOVIDADE NA ÁREA! 📢\n\nAcabamos de receber [Nome do Produto ou Serviço]! Perfeito para [Benefício Principal].\n\nVenha conferir de perto e seja um dos primeiros a experimentar.\n\n#SeuNegócio #Novidade #[SuaCidade]`,oferta: `💰 OFERTA IMPERDÍVEL! 💰\n\nSó nesta semana, garanta seu/sua [Nome do Produto] com [Desconto %] de desconto! De R$ [Preço Antigo] por apenas R$ [Preço Novo].\n\nNão perca essa chance! A oferta é válida até [Data Final da Oferta].\n\n#Promoção #Desconto #SeuNegócio`,evento: `📅 VOCÊ É NOSSO CONVIDADO ESPECIAL! 📅\n\nParticipe do nosso [Nome do Evento] no dia [Data do Evento], às [Horário]. Será um momento incrível com [Breve Descrição do que vai acontecer].\n\nMarque na sua agenda e venha celebrar conosco!\n\nEndereço: [Seu Endereço]\n\n#Evento #SeuNegócio #[SuaCidade]`,dica: `💡 DICA RÁPIDA DA SEMANA 💡\n\nVocê sabia que [Fato ou Dica Interessante sobre seu nicho]?\n\nIsso pode te ajudar a [Benefício da dica]. Quer saber mais? Deixe sua pergunta nos comentários!\n\n#DicaDaSemana #Curiosidade #SeuNegócio`};
     const ideias = ["Apresente um funcionário e conte uma curiosidade sobre ele.","Mostre os bastidores da sua loja ou escritório.","Qual foi o pedido mais inusitado que já recebeu?","Crie um post de 'Verdade ou Mentira' sobre seu produto/serviço.","Compartilhe um depoimento de um cliente satisfeito.","Faça uma enquete: 'Qual desses dois produtos vocês preferem?'.","Dê uma dica rápida que não seja sobre vender, mas que ajude seu cliente.","Poste uma foto de um detalhe interessante do seu espaço de trabalho.","Conte a história de como o seu negócio começou.","Pergunte aos seus seguidores o que eles gostariam de ver em oferta."];
     
@@ -122,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function buscarImagens() {
         const query = searchInput.value;
-        if (!query || !unsplashAccessKey) {imageResults.innerHTML = "<p>Digite um termo para buscar.</p>"; return;}
+        if (!query || !unsplashAccessKey) {if(imageResults) imageResults.innerHTML = "<p>Digite um termo para buscar.</p>"; return;}
         loadingMessage.style.display = 'block';
         imageResults.innerHTML = '';
         try {
@@ -157,21 +156,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function carregarProgressoChecklist(userId) {
-        if (!userId) { checklistItems.forEach(item => item.checked = false); return; }
+        if (!userId) { if(checklistItems) checklistItems.forEach(item => item.checked = false); return; }
         const progresso = JSON.parse(localStorage.getItem(`progresso_${userId}`));
         if (progresso) { checklistItems.forEach(item => { item.checked = progresso[item.id] || false; }); }
     }
 
-    // --- Event Listeners ---
     if (postTypeSelect) postTypeSelect.addEventListener('change', updateTemplate);
     if (copyButton) copyButton.addEventListener('click', copyToClipboard);
     if (savePostButton) savePostButton.addEventListener('click', salvarPost);
     if (novaIdeiaButton) novaIdeiaButton.addEventListener('click', gerarNovaIdeia);
     if (searchButton) searchButton.addEventListener('click', buscarImagens);
     if (searchInput) searchInput.addEventListener('keypress', e => e.key === 'Enter' && buscarImagens());
-    checklistItems.forEach(item => item.addEventListener('change', () => auth.currentUser && salvarProgressoChecklist(auth.currentUser.uid)));
+    if(checklistItems) checklistItems.forEach(item => item.addEventListener('change', () => auth.currentUser && salvarProgressoChecklist(auth.currentUser.uid)));
 
-    // --- Ações Iniciais ---
     updateTemplate();
     gerarNovaIdeia();
 });
