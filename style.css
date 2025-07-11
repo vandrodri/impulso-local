@@ -244,3 +244,55 @@ footer {
 #loading-message {
     text-align: center;
 }
+/* Estilos para o Checklist GMB */
+.checklist-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.checklist-item input[type="checkbox"] {
+    /* Esconde o checkbox padrão */
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checklist-item label {
+    cursor: pointer;
+    position: relative;
+    padding-left: 35px; /* Espaço para o nosso checkbox falso */
+    font-weight: normal; /* Sobrescreve o negrito do label geral */
+    margin-bottom: 0;
+}
+
+/* Cria nosso checkbox personalizado (o quadrado) */
+.checklist-item label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: -2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    background-color: var(--bg-color);
+    box-shadow: inset -3px -3px 7px var(--shadow-light),
+                inset 3px 3px 7px var(--shadow-dark);
+}
+
+/* Cria o "check" (✓) quando marcado */
+.checklist-item input[type="checkbox"]:checked + label::after {
+    content: '✓';
+    position: absolute;
+    left: 4px;
+    top: -2px;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--primary-color);
+}
+
+/* Risca o texto quando marcado */
+.checklist-item input[type="checkbox"]:checked + label {
+    text-decoration: line-through;
+    opacity: 0.7;
+}
