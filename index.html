@@ -1,3 +1,4 @@
+Generated html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,14 +11,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- ⭐ JANELA MODAL DE LOGIN/CADASTRO (NOVA) ⭐ -->
+    <div id="auth-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button id="close-modal-button" class="close-button">×</button>
+            <div id="login-view">
+                <h2>Acessar Conta</h2>
+                <input type="email" id="login-email" placeholder="Seu e-mail" required>
+                <input type="password" id="login-password" placeholder="Sua senha" required>
+                <button id="login-button">Entrar</button>
+                <p class="auth-switch">Não tem uma conta? <a href="#" id="show-register">Cadastre-se</a></p>
+            </div>
+            <div id="register-view" style="display: none;">
+                <h2>Criar Nova Conta</h2>
+                <input type="email" id="register-email" placeholder="Seu e-mail" required>
+                <input type="password" id="register-password" placeholder="Crie uma senha" required>
+                <button id="register-button">Criar Conta</button>
+                <p class="auth-switch">Já tem uma conta? <a href="#" id="show-login">Faça o login</a></p>
+            </div>
+            <p id="auth-error" class="error-message"></p>
+        </div>
+    </div>
+
+
     <div class="container">
-        <!-- ... (Todo o conteúdo do header e main continua o mesmo) ... -->
         <header>
             <img src="logo.png" alt="Logo Impulso Local" class="logo">
+            <!-- BOTÃO DE LOGIN/LOGOUT (NOVO) -->
+            <div id="user-area">
+                <button id="open-login-modal-button">Login</button>
+            </div>
             <h1>Impulso Local</h1>
             <p>Crie posts de alta qualidade para o seu negócio em 2 minutos.</p>
         </header>
+
         <main>
+            <!-- O restante do conteúdo do app continua o mesmo -->
             <section class="card" id="gerador-posts"><h2>Gerador de Posts Inteligente</h2><p>Escolha um tipo de post e preencha as informações.</p><div class="input-group"><label for="post-type">1. Tipo de Post:</label><select id="post-type"><option value="novidade">📢 Novidade</option><option value="oferta">💰 Oferta Especial</option><option value="evento">📅 Evento</option><option value="dica">💡 Dica da Semana</option></select></div><div class="input-group"><label for="post-template">2. Template de Texto:</label><textarea id="post-template" rows="8" placeholder="O texto do seu post aparecerá aqui..."></textarea></div><div class="actions"><button id="copy-button">Copiar Texto do Post</button><a href="https://business.google.com/locations" target="_blank" class="button-external">Abrir meu GMB ↗</a></div></section>
             <section class="card" id="banco-ideias"><h2>💡 Banco de Ideias</h2><p id="ideia-texto">Clique no botão abaixo para gerar uma ideia de post!</p><button id="nova-ideia-button">Gerar Nova Ideia</button></section>
             <section class="card" id="biblioteca-midia"><h2>🖼️ Biblioteca de Mídia Gratuita</h2><div class="search-bar"><input type="text" id="search-input" placeholder="Ex: café, escritório, pessoas felizes"><button id="search-button">Buscar</button></div><div id="image-results" class="image-grid"></div><p id="loading-message" style="display: none;">Buscando imagens...</p></section>
@@ -26,12 +55,12 @@
         <footer><p>Projeto Impulso Local. Idealizado por Vanderlei, construído por Gemini.</p></footer>
     </div>
 
-    <!-- SDKs do Firebase (NOVAS LINHAS) -->
+    <!-- SDKs do Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-    <!-- Nosso script principal (deve vir DEPOIS dos SDKs do Firebase) -->
+    <!-- Nosso script principal -->
     <script src="script.js"></script>
 </body>
-</html>
+</html>```
