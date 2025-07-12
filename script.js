@@ -13,8 +13,6 @@ apiKey: "AIzaSyBi0MLw52Dk5mTDWDp_Zh_3M9LNVxCkUfA",
   measurementId: "G-XWFZ18HB97"
 };
 
-};
-
 
 // =================================================================
 // PARTE 2: CHAVE DA API DO UNSPLASH
