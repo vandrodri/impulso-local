@@ -3,8 +3,9 @@
 // =================================================================
 
 /*--- COLE AQUI DENTRO O SEU OBJETO firebaseConfig COMPLETO ---*/
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-apiKey: "AIzaSyBi0MLw52Dk5mTDWDp_Zh_3M9LNVxCkUfA",
+  apiKey: "AIzaSyBi0MLw52Dk5mTDWDp_Zh_3M9LNVxCkUfA",
   authDomain: "impulso-local-app.firebaseapp.com",
   projectId: "impulso-local-app",
   storageBucket: "impulso-local-app.firebasestorage.app",
@@ -12,7 +13,6 @@ apiKey: "AIzaSyBi0MLw52Dk5mTDWDp_Zh_3M9LNVxCkUfA",
   appId: "1:29137714970:web:68b1f15b779b1e87b5f6a3",
   measurementId: "G-XWFZ18HB97"
 };
-
 
 // =================================================================
 // PARTE 2: CHAVE DA API DO UNSPLASH
