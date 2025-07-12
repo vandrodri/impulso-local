@@ -427,4 +427,57 @@ footer {
 #save-post-button:active {
     box-shadow: inset -5px -5px 10px var(--shadow-light),
                 inset 5px 5px 10px var(--shadow-dark);
+/* Estilos para a Seção de Posts Salvos */
+
+#saved-posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.saved-post-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: var(--bg-color);
+    box-shadow: inset -5px -5px 10px var(--shadow-light),
+                inset 5px 5px 10px var(--shadow-dark);
+}
+
+.saved-post-content {
+    flex-grow: 1;
+    text-align: left;
+    white-space: pre-wrap; /* Preserva as quebras de linha do post */
+    font-size: 0.9em;
+}
+
+.saved-post-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.saved-post-actions button {
+    padding: 8px 12px;
+    font-size: 0.8em;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    min-width: 80px;
+}
+
+.use-post-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.delete-post-button {
+    background-color: #ff5252; /* Vermelho para ação de perigo */
+    color: white;
+}
 }
