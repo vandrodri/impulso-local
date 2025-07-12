@@ -4,13 +4,12 @@
 // =================================================================
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBi0MLw52Dk5mTDWDp_Zh_3M9LNVxCkUFA",
-    authDomain: "impulso-local-app.firebaseapp.com",
-    projectId: "impulso-local-app",
-    storageBucket: "impulso-local-app.appspot.com",
-    messagingSenderId: "29137714970",
-    appId: "1:29137714970:web:68b1f15b779b1e87b5f6a3",
-    measurementId: "G-XWFZ18HB97"
+    apiKey: "AIzaSyASJiulMmARpo6Ec0h3eN5bj9UaEWdHfhE",
+  authDomain: "zapymap.firebaseapp.com",
+  projectId: "zapymap",
+  storageBucket: "zapymap.firebasestorage.app",
+  messagingSenderId: "517497705831",
+  appId: "1:517497705831:web:2d38ba0f704d03d7928bc2"
 };
 
 const unsplashAccessKey = "e0Bb2UHLIinYKGG0Xmbp8vt_nIXoom5sXhu5341TwwA";
