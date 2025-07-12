@@ -1,29 +1,19 @@
 // =================================================================
-// PARTE 1: CONFIGURAÇÃO DO FIREBASE
+// CÓDIGO COMPLETO E PRÉ-PREENCHIDO PARA O IMPULSO LOCAL
+// VERSÃO FINAL - NÃO EDITE NADA, APENAS COPIE E COLE.
 // =================================================================
 
-/*--- COLE AQUI DENTRO O SEU OBJETO firebaseConfig COMPLETO ---*/
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyBi0MLw52Dk5mTDWDp_Zh_3M9LNVxCkUfA",
-  authDomain: "impulso-local-app.firebaseapp.com",
-  projectId: "impulso-local-app",
-  storageBucket: "impulso-local-app.firebasestorage.app",
-  messagingSenderId: "29137714970",
-  appId: "1:29137714970:web:68b1f15b779b1e87b5f6a3",
-  measurementId: "G-XWFZ18HB97"
+    apiKey: "AIzaSyBi0MLw52Dk5mTDWDp_Zh_3M9LNVxCkUFA",
+    authDomain: "impulso-local-app.firebaseapp.com",
+    projectId: "impulso-local-app",
+    storageBucket: "impulso-local-app.appspot.com",
+    messagingSenderId: "29137714970",
+    appId: "1:29137714970:web:68b1f15b779b1e87b5f6a3",
+    measurementId: "G-XWFZ18HB97"
 };
-// =================================================================
-// PARTE 2: CHAVE DA API DO UNSPLASH
-// =================================================================
 
-/*--- COLE AQUI DENTRO, ENTRE AS ASPAS, A SUA CHAVE DO UNSPLASH ---*/
-const unsplashAccessKey = "e0Bb2UHLInYKGGOXmbp8vt_nIXoom5sXhu5341TwwwA";
-
-
-// =================================================================
-// CÓDIGO DO APP (NÃO MEXER DAQUI PARA BAIXO)
-// =================================================================
+const unsplashAccessKey = "e0Bb2UHLIinYKGG0Xmbp8vt_nIXoom5sXhu5341TwwA";
 
 try {
     const app = firebase.initializeApp(firebaseConfig);
@@ -36,7 +26,6 @@ try {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- Seletores de Elementos (DOM) ---
     const postTypeSelect = document.getElementById('post-type');
     const postTemplateTextarea = document.getElementById('post-template');
     const copyButton = document.getElementById('copy-button');
@@ -65,38 +54,58 @@ document.addEventListener('DOMContentLoaded', () => {
     const savedPostsSection = document.getElementById('saved-posts-section');
     const savedPostsList = document.getElementById('saved-posts-list');
 
+    let unsubscribeSavedPosts = null;
 
-    // --- LÓGICA DE AUTENTICAÇÃO E DADOS ---
-    let unsubscribeSavedPosts = null; // Para parar de ouvir os posts quando o usuário sair
+    function setupAuthListeners() {
+        const openLoginBtn = document.getElementById('open-login-modal-button');
+        if (openLoginBtn) openLoginBtn.addEventListener('click', () => authModal.style.display = 'flex');
+        const logoutBtn = document.getElementById('logout-button');
+        if (logoutBtn) logoutBtn.addEventListener('click', logout);
+    }
+
+    if (closeModalButton) closeModalButton.addEventListener('click', () => authModal.style.display = 'none');
+    if (window) window.addEventListener('click', (e) => e.target === authModal && (authModal.style.display = 'none'));
+    if (showRegisterLink) showRegisterLink.addEventListener('click', (e) => { e.preventDefault(); loginView.style.display = 'none'; registerView.style.display = 'block'; authError.textContent = ''; });
+    if (showLoginLink) showLoginLink.addEventListener('click', (e) => { e.preventDefault(); registerView.style.display = 'none'; loginView.style.display = 'block'; authError.textContent = ''; });
+
+    if (registerButton) registerButton.addEventListener('click', () => {
+        const [email, password] = [registerEmailInput.value, registerPasswordInput.value];
+        if (!email || !password) { authError.textContent = "Por favor, preencha todos os campos."; return; }
+        auth.createUserWithEmailAndPassword(email, password).then(() => authModal.style.display = 'none').catch(err => authError.textContent = traduzirErroFirebase(err.code));
+    });
+
+    if (loginButton) loginButton.addEventListener('click', () => {
+        const [email, password] = [loginEmailInput.value, loginPasswordInput.value];
+        if (!email || !password) { authError.textContent = "Por favor, preencha todos os campos."; return; }
+        auth.signInWithEmailAndPassword(email, password).then(() => authModal.style.display = 'none').catch(err => authError.textContent = traduzirErroFirebase(err.code));
+    });
+
+    function logout() { auth.signOut(); }
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            // Usuário está logado
             userArea.innerHTML = `<button id="logout-button">Sair (${user.email.split('@')[0]})</button>`;
-            if(savePostButton) savePostButton.style.display = 'inline-block';
-            if(savedPostsSection) savedPostsSection.style.display = 'block'; // Mostra a seção de posts salvos
-            
+            if (savePostButton) savePostButton.style.display = 'inline-block';
+            if (savedPostsSection) savedPostsSection.style.display = 'block';
             carregarProgressoChecklist(user.uid);
-            escutarPostsSalvos(user.uid); // Começa a ouvir os posts salvos
+            escutarPostsSalvos(user.uid);
         } else {
-            // Usuário está deslogado
             userArea.innerHTML = `<button id="open-login-modal-button">Login</button>`;
-            if(savePostButton) savePostButton.style.display = 'none';
-            if(savedPostsSection) savedPostsSection.style.display = 'none'; // Esconde a seção
-
-            if (unsubscribeSavedPosts) {
-                unsubscribeSavedPosts(); // Para de ouvir para economizar recursos
-            }
-            savedPostsList.innerHTML = ''; // Limpa a lista
+            if (savePostButton) savePostButton.style.display = 'none';
+            if (savedPostsSection) savedPostsSection.style.display = 'none';
+            if (unsubscribeSavedPosts) unsubscribeSavedPosts();
+            if (savedPostsList) savedPostsList.innerHTML = '';
         }
         setupAuthListeners();
     });
-
+    
     function escutarPostsSalvos(userId) {
+        if (unsubscribeSavedPosts) unsubscribeSavedPosts();
         unsubscribeSavedPosts = db.collection('users').doc(userId).collection('savedPosts')
-            .orderBy('createdAt', 'desc') // Ordena pelos mais recentes
+            .orderBy('createdAt', 'desc')
             .onSnapshot(snapshot => {
-                savedPostsList.innerHTML = ''; // Limpa a lista para redesenhar
+                if(!savedPostsList) return;
+                savedPostsList.innerHTML = '';
                 if (snapshot.empty) {
                     savedPostsList.innerHTML = '<p>Você ainda não salvou nenhum post. Use o botão "Salvar Post" acima!</p>';
                     return;
@@ -105,10 +114,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     const post = doc.data();
                     const postElement = document.createElement('div');
                     postElement.className = 'saved-post-item';
+                    const escapedContent = post.content.replace(/"/g, '"');
                     postElement.innerHTML = `
                         <div class="saved-post-content">${post.content.replace(/\n/g, '<br>')}</div>
                         <div class="saved-post-actions">
-                            <button class="use-post-button" data-content="${escape(post.content)}">Usar</button>
+                            <button class="use-post-button" data-content="${escapedContent}">Usar</button>
                             <button class="delete-post-button" data-id="${doc.id}">Apagar</button>
                         </div>
                     `;
@@ -116,15 +126,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
     }
-    
-    savedPostsList.addEventListener('click', (e) => {
+
+    if (savedPostsList) savedPostsList.addEventListener('click', (e) => {
         const target = e.target;
         const user = auth.currentUser;
         if (!user) return;
 
         if (target.classList.contains('use-post-button')) {
-            postTemplateTextarea.value = unescape(target.dataset.content);
-            window.scrollTo(0, 0); // Rola para o topo da página
+            postTemplateTextarea.value = target.dataset.content;
+            window.scrollTo(0, 0);
         }
         if (target.classList.contains('delete-post-button')) {
             if (confirm("Tem certeza que deseja apagar este post?")) {
@@ -134,32 +144,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-
-    // --- Funções de Autenticação ---
-    function setupAuthListeners() {
-        const openLoginBtn = document.getElementById('open-login-modal-button');
-        if (openLoginBtn) openLoginBtn.addEventListener('click', () => authModal.style.display = 'flex');
-        const logoutBtn = document.getElementById('logout-button');
-        if (logoutBtn) logoutBtn.addEventListener('click', logout);
+    function traduzirErroFirebase(code) {
+        switch (code) {
+            case "auth/invalid-email": return "O formato do e-mail é inválido.";
+            case "auth/weak-password": return "A senha precisa ter pelo menos 6 caracteres.";
+            case "auth/email-already-in-use": return "Este e-mail já está cadastrado.";
+            case "auth/user-not-found": case "auth/wrong-password": return "E-mail ou senha incorretos.";
+            default: return "Ocorreu um erro. Tente novamente.";
+        }
     }
-    if(closeModalButton) closeModalButton.addEventListener('click', () => authModal.style.display = 'none');
-    if(window) window.addEventListener('click', (e) => e.target === authModal && (authModal.style.display = 'none'));
-    if(showRegisterLink) showRegisterLink.addEventListener('click', (e) => { e.preventDefault(); loginView.style.display = 'none'; registerView.style.display = 'block'; authError.textContent = ''; });
-    if(showLoginLink) showLoginLink.addEventListener('click', (e) => { e.preventDefault(); registerView.style.display = 'none'; loginView.style.display = 'block'; authError.textContent = ''; });
-    if(registerButton) registerButton.addEventListener('click', () => { /* ...código de registro... */ });
-    if(loginButton) loginButton.addEventListener('click', () => { /* ...código de login... */ });
-    function logout() { auth.signOut(); }
-    function traduzirErroFirebase(code) { /* ...código de tradução de erros... */ }
 
-
-    // --- Funções Principais do App ---
-    const templates = { /* ... (dados dos templates) ... */ };
-    const ideias = [ /* ... (dados das ideias) ... */ ];
-    function updateTemplate() { /* ... (código para atualizar template) ... */ }
-    function copyToClipboard() { /* ... (código para copiar) ... */ }
-    function gerarNovaIdeia() { /* ... (código para gerar ideia) ... */ }
-    async function buscarImagens() { /* ... (código da busca de imagens) ... */ }
+    const templates = {novidade: `📢 NOVIDADE NA ÁREA! 📢\n\nAcabamos de receber [Nome do Produto ou Serviço]! Perfeito para [Benefício Principal].\n\nVenha conferir de perto e seja um dos primeiros a experimentar.\n\n#SeuNegócio #Novidade #[SuaCidade]`,oferta: `💰 OFERTA IMPERDÍVEL! 💰\n\nSó nesta semana, garanta seu/sua [Nome do Produto] com [Desconto %] de desconto! De R$ [Preço Antigo] por apenas R$ [Preço Novo].\n\nNão perca essa chance! A oferta é válida até [Data Final da Oferta].\n\n#Promoção #Desconto #SeuNegócio`,evento: `📅 VOCÊ É NOSSO CONVIDADO ESPECIAL! 📅\n\nParticipe do nosso [Nome do Evento] no dia [Data do Evento], às [Horário]. Será um momento incrível com [Breve Descrição do que vai acontecer].\n\nMarque na sua agenda e venha celebrar conosco!\n\nEndereço: [Seu Endereço]\n\n#Evento #SeuNegócio #[SuaCidade]`,dica: `💡 DICA RÁPIDA DA SEMANA 💡\n\nVocê sabia que [Fato ou Dica Interessante sobre seu nicho]?\n\nIsso pode te ajudar a [Benefício da dica]. Quer saber mais? Deixe sua pergunta nos comentários!\n\n#DicaDaSemana #Curiosidade #SeuNegócio`};
+    const ideias = ["Apresente um funcionário e conte uma curiosidade sobre ele.","Mostre os bastidores da sua loja ou escritório.","Qual foi o pedido mais inusitado que já recebeu?","Crie um post de 'Verdade ou Mentira' sobre seu produto/serviço.","Compartilhe um depoimento de um cliente satisfeito.","Faça uma enquete: 'Qual desses dois produtos vocês preferem?'.","Dê uma dica rápida que não seja sobre vender, mas que ajude seu cliente.","Poste uma foto de um detalhe interessante do seu espaço de trabalho.","Conte a história de como o seu negócio começou.","Pergunte aos seus seguidores o que eles gostariam de ver em oferta."];
     
+    function updateTemplate() { if (postTemplateTextarea) postTemplateTextarea.value = templates[postTypeSelect.value]; }
+    function copyToClipboard() { postTemplateTextarea.select(); document.execCommand('copy'); copyButton.textContent = 'Copiado!'; setTimeout(() => { copyButton.textContent = 'Copiar Texto'; }, 2000); }
+    function gerarNovaIdeia() { if (ideiaTexto) ideiaTexto.textContent = ideias[Math.floor(Math.random() * ideias.length)]; }
+    
+    async function buscarImagens() {
+        const query = searchInput.value;
+        if (!query || !unsplashAccessKey) {if(imageResults) imageResults.innerHTML = "<p>Digite um termo para buscar.</p>"; return;}
+        loadingMessage.style.display = 'block';
+        imageResults.innerHTML = '';
+        try {
+            const response = await fetch(`https://api.unsplash.com/search/photos?query=${query}&per_page=12&client_id=${unsplashAccessKey}&lang=pt`);
+            const data = await response.json();
+            if (data.results.length === 0) { imageResults.innerHTML = "<p>Nenhuma imagem encontrada.</p>"; }
+            else { data.results.forEach(photo => { const img = document.createElement('img'); img.src = photo.urls.small; img.alt = photo.alt_description; img.onclick = () => window.open(photo.links.html, '_blank'); imageResults.appendChild(img); }); }
+        } catch (error) { imageResults.innerHTML = "<p>Ocorreu um erro ao buscar imagens.</p>"; }
+        finally { loadingMessage.style.display = 'none'; }
+    }
+
     function salvarPost() {
         const postContent = postTemplateTextarea.value;
         if (!postContent.trim()) { alert("Não há nada para salvar!"); return; }
@@ -175,11 +190,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function salvarProgressoChecklist(userId) { /* ... (código para salvar checklist) ... */ }
-    function carregarProgressoChecklist(userId) { /* ... (código para carregar checklist) ... */ }
+    function salvarProgressoChecklist(userId) {
+        if (!userId) return;
+        const progresso = {};
+        checklistItems.forEach(item => { progresso[item.id] = item.checked; });
+        localStorage.setItem(`progresso_${userId}`, JSON.stringify(progresso));
+    }
 
+    function carregarProgressoChecklist(userId) {
+        if (!userId) { if(checklistItems) checklistItems.forEach(item => item.checked = false); return; }
+        const progresso = JSON.parse(localStorage.getItem(`progresso_${userId}`));
+        if (progresso) { checklistItems.forEach(item => { item.checked = progresso[item.id] || false; }); }
+    }
 
-    // --- Event Listeners do App ---
     if (postTypeSelect) postTypeSelect.addEventListener('change', updateTemplate);
     if (copyButton) copyButton.addEventListener('click', copyToClipboard);
     if (savePostButton) savePostButton.addEventListener('click', salvarPost);
@@ -188,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchInput) searchInput.addEventListener('keypress', e => e.key === 'Enter' && buscarImagens());
     if(checklistItems) checklistItems.forEach(item => item.addEventListener('change', () => auth.currentUser && salvarProgressoChecklist(auth.currentUser.uid)));
 
-    // --- Ações Iniciais ---
     updateTemplate();
     gerarNovaIdeia();
 });
