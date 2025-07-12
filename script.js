@@ -12,7 +12,7 @@ const firebaseConfig = {
   appId: "1:517497705831:web:2d38ba0f704d03d7928bc2"
 };
 
-const unsplashAccessKey = "e0Bb2UHLIinYKGG0Xmbp8vt_nIXoom5sXhu5341TwwA";
+const unsplashAccessKey = "CGYigQ8Iy6Vg8jIY9yQNZ62Jn5dMV9iYd4vqUIg-QR0";
 
 try {
     const app = firebase.initializeApp(firebaseConfig);
